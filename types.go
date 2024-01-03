@@ -119,16 +119,20 @@ type Subaccount struct {
 	Description          string   `json:"description"`
 	LastModifiedDateTime string   `json:"lastModifiedDateTime"`
 	Active               bool     `json:"active"`
-	Segments             Segments `json:"segments"`
+	Segments             Segments `json:"segments,omitempty"`
 }
 
 type Segments []Segment
 
 type Segment struct {
 	SegmentID               int    `json:"segmentId"`
-	SegmentDescription      string `json:"segmentDescription"`
+	SegmentDescription      string `json:"segmentDescription,omitempty"`
 	SegmentValue            string `json:"segmentValue"`
-	SegmentValueDescription string `json:"segmentValueDescription"`
+	SegmentValueDescription string `json:"segmentValueDescription,omitempty"`
+}
+
+func (s Segment) IsEmpty() bool {
+	return zero.IsZero(s)
 }
 
 type Ledgers []Ledger
@@ -535,17 +539,14 @@ type InvoiceLine struct {
 	DiscountPercent            ValueNumber     `json:"discountPercent,omitempty"`
 	DiscountAmountInCurrency   ValueNumber     `json:"discountAmountInCurrency,omitempty"`
 	ManualDiscount             ValueBool       `json:"manualDiscount,omitempty"`
-	Subaccount                 struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"subaccount,omitempty"`
-	Salesperson      ValueString `json:"salesperson,omitempty"`
-	DeferralSchedule ValueInt    `json:"deferralSchedule,omitempty"`
-	DeferralCode     ValueString `json:"deferralCode,omitempty"`
-	TermStartDate    ValueTime   `json:"termStartDate,omitempty"`
-	TermEndDate      ValueTime   `json:"termEndDate,omitempty"`
-	Note             ValueString `json:"note"`
-	BranchNumber     Branch      `json:"branchNumber,omitempty"`
+	Subaccount                 Segment         `json:"subaccount,omitempty"`
+	Salesperson                ValueString     `json:"salesperson,omitempty"`
+	DeferralSchedule           ValueInt        `json:"deferralSchedule,omitempty"`
+	DeferralCode               ValueString     `json:"deferralCode,omitempty"`
+	TermStartDate              ValueTime       `json:"termStartDate,omitempty"`
+	TermEndDate                ValueTime       `json:"termEndDate,omitempty"`
+	Note                       ValueString     `json:"note"`
+	BranchNumber               Branch          `json:"branchNumber,omitempty"`
 }
 
 func (i InvoiceLine) MarshalJSON() ([]byte, error) {
@@ -783,38 +784,20 @@ func (c Contact) IsEmpty() bool {
 
 type CustomerGLAccounts struct {
 	CustomerLedgerAccount    ValueString `json:"customerLedgerAccount"`
-	CustomerLedgerSubaccount []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"customerLedgerSubaccount"`
-	SalesAccount           ValueString `json:"salesAccount"`
-	SalesNonTaxableAccount ValueString `json:"salesNonTaxableAccount"`
-	SalesEuAccount         ValueString `json:"salesEuAccount"`
-	SalesExportAccount     ValueString `json:"salesExportAccount"`
-	SalesSubaccount        []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"salesSubaccount"`
-	DiscountAccount    ValueString `json:"discountAccount"`
-	DiscountSubaccount []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"discountSubaccount"`
-	FreightAccount    ValueString `json:"freightAccount"`
-	FreightSubaccount []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"freightSubaccount"`
-	CashDiscountAccount    ValueString `json:"cashDiscountAccount"`
-	CashDiscountSubaccount []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"cashDiscountSubaccount"`
-	PrepaymentAccount    ValueString `json:"prepaymentAccount"`
-	PrepaymentSubaccount []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"prepaymentSubaccount"`
+	CustomerLedgerSubaccount Segment     `json:"customerLedgerSubaccount,omitempty"`
+	SalesAccount             ValueString `json:"salesAccount"`
+	SalesNonTaxableAccount   ValueString `json:"salesNonTaxableAccount"`
+	SalesEuAccount           ValueString `json:"salesEuAccount"`
+	SalesExportAccount       ValueString `json:"salesExportAccount"`
+	SalesSubaccount          Segments    `json:"salesSubaccount,omitempty"`
+	DiscountAccount          ValueString `json:"discountAccount"`
+	DiscountSubaccount       Segments    `json:"discountSubaccount,omitempty"`
+	FreightAccount           ValueString `json:"freightAccount"`
+	FreightSubaccount        Segments    `json:"freightSubaccount,omitempty"`
+	CashDiscountAccount      ValueString `json:"cashDiscountAccount"`
+	CashDiscountSubaccount   Segments    `json:"cashDiscountSubaccount,omitempty"`
+	PrepaymentAccount        ValueString `json:"prepaymentAccount"`
+	PrepaymentSubaccount     Segments    `json:"prepaymentSubaccount,omitempty"`
 }
 
 func (c CustomerGLAccounts) MarshalJSON() ([]byte, error) {
@@ -936,17 +919,14 @@ type CustomerCreditNoteV2PostBodyLine struct {
 	DiscountPercent          ValueNumber     `json:"discountPercent,omitempty"`
 	DiscountAmountInCurrency ValueNumber     `json:"discountAmountInCurrency,omitempty"`
 	ManualDiscount           ValueBool       `json:"manualDiscount"`
-	Subaccount               []struct {
-		SegmentID    int    `json:"segmentId"`
-		SegmentValue string `json:"segmentValue"`
-	} `json:"subaccount"`
-	Salesperson      ValueString `json:"salesperson,omitempty"`
-	DeferralSchedule ValueInt    `json:"deferralSchedule,omitempty"`
-	DeferralCode     ValueString `json:"deferralCode,omitempty"`
-	TermStartDate    ValueTime   `json:"termStartDate,omitempty"`
-	TermEndDate      ValueTime   `json:"termEndDate,omitempty"`
-	Note             ValueString `json:"note,omitempty"`
-	BranchNumber     ValueString `json:"branchNumber,omitempty"`
+	Subaccount               Segments        `json:"subaccount,omitempty"`
+	Salesperson              ValueString     `json:"salesperson,omitempty"`
+	DeferralSchedule         ValueInt        `json:"deferralSchedule,omitempty"`
+	DeferralCode             ValueString     `json:"deferralCode,omitempty"`
+	TermStartDate            ValueTime       `json:"termStartDate,omitempty"`
+	TermEndDate              ValueTime       `json:"termEndDate,omitempty"`
+	Note                     ValueString     `json:"note,omitempty"`
+	BranchNumber             ValueString     `json:"branchNumber,omitempty"`
 }
 
 func (l CustomerCreditNoteV2PostBodyLine) MarshalJSON() ([]byte, error) {
@@ -1118,17 +1098,12 @@ type CreditNote struct {
 		Description string `json:"description"`
 	} `json:"account"`
 	Subaccount struct {
-		SubaccountNumber     string `json:"subaccountNumber"`
-		SubaccountID         int    `json:"subaccountId"`
-		Description          string `json:"description"`
-		LastModifiedDateTime string `json:"lastModifiedDateTime"`
-		Active               bool   `json:"active"`
-		Segments             []struct {
-			SegmentID               int    `json:"segmentId"`
-			SegmentDescription      string `json:"segmentDescription"`
-			SegmentValue            string `json:"segmentValue"`
-			SegmentValueDescription string `json:"segmentValueDescription"`
-		} `json:"segments"`
+		SubaccountNumber     string   `json:"subaccountNumber"`
+		SubaccountID         int      `json:"subaccountId"`
+		Description          string   `json:"description"`
+		LastModifiedDateTime string   `json:"lastModifiedDateTime"`
+		Active               bool     `json:"active"`
+		Segments             Segments `json:"segments,omitempty"`
 	} `json:"subaccount,omitempty"`
 	Metadata struct {
 		TotalCount  int `json:"totalCount"`
@@ -1170,20 +1145,31 @@ type CreditNoteLine struct {
 	DiscountAmountInCurrency float64 `json:"discountAmountInCurrency"`
 	ManualDiscount           bool    `json:"manualDiscount"`
 	Subaccount               struct {
-		SubaccountNumber     string `json:"subaccountNumber"`
-		SubaccountID         int    `json:"subaccountId"`
-		LastModifiedDateTime string `json:"lastModifiedDateTime"`
-		Active               bool   `json:"active"`
-		Segments             []struct {
-			SegmentID               int    `json:"segmentId"`
-			SegmentDescription      string `json:"segmentDescription"`
-			SegmentValue            string `json:"segmentValue"`
-			SegmentValueDescription string `json:"segmentValueDescription"`
-		} `json:"segments"`
+		SubaccountNumber     string   `json:"subaccountNumber"`
+		SubaccountID         int      `json:"subaccountId"`
+		LastModifiedDateTime string   `json:"lastModifiedDateTime"`
+		Active               bool     `json:"active"`
+		Segments             Segments `json:"segments,omitempty"`
 	} `json:"subaccount"`
 	DeferralSchedule int `json:"deferralSchedule"`
 	BranchNumber     struct {
 		Number string `json:"number"`
 		Name   string `json:"name"`
 	} `json:"branchNumber"`
+}
+
+type Departments []Department
+
+type Department struct {
+}
+
+type Context struct {
+}
+
+type ContextUserdetails struct {
+}
+
+type Employees []Employee
+
+type Employee struct {
 }
