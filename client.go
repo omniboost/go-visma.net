@@ -226,8 +226,12 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("Accept", c.MediaType())
 	r.Header.Add("User-Agent", c.UserAgent())
 	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken()))
-	r.Header.Add("ipp-company-id", c.CompanyID())
-	r.Header.Add("ipp-application-type", c.ApplicationType())
+	if c.CompanyID() != "" {
+		r.Header.Add("ipp-company-id", c.CompanyID())
+	}
+	if c.ApplicationType() != "" {
+		r.Header.Add("ipp-application-type", c.ApplicationType())
+	}
 
 	return r, nil
 }
