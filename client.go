@@ -34,7 +34,7 @@ var (
 )
 
 // NewClient returns a new Exact Globe Client client
-func NewClient(httpClient *http.Client, accessToken, companyID, applicationType string) *Client {
+func NewClient(httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -42,9 +42,6 @@ func NewClient(httpClient *http.Client, accessToken, companyID, applicationType 
 	client := &Client{}
 
 	client.SetHTTPClient(httpClient)
-	client.SetAccessToken(accessToken)
-	client.SetCompanyID(companyID)
-	client.SetApplicationType(applicationType)
 	client.SetBaseURL(BaseURL)
 	client.SetDebug(false)
 	client.SetUserAgent(userAgent)
@@ -227,10 +224,10 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("User-Agent", c.UserAgent())
 	r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken()))
 	if c.CompanyID() != "" {
-		r.Header.Add("ipp-company-id", c.CompanyID())
+		// r.Header.Add("ipp-company-id", c.CompanyID())
 	}
 	if c.ApplicationType() != "" {
-		r.Header.Add("ipp-application-type", c.ApplicationType())
+		// r.Header.Add("ipp-application-type", c.ApplicationType())
 	}
 
 	return r, nil
