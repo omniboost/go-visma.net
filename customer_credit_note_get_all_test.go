@@ -8,6 +8,7 @@ import (
 
 func TestCustomerCreditNoteGetAll(t *testing.T) {
 	req := client.NewCustomerCreditNoteGetAll()
+	req.QueryParams().ExternalReference = "202331913"
 	resp, err := req.Do()
 	if err != nil {
 		t.Error(err)
