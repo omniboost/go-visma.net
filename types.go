@@ -534,7 +534,7 @@ type InvoiceLine struct {
 	UnitPriceInCurrency        ValueNumber     `json:"unitPriceInCurrency"`
 	ManualAmountInCurrency     ValueNumber     `json:"manualAmountInCurrency"`
 	AccountNumber              ValueString     `json:"accountNumber"`
-	VATCodeID                  ValueNullString `json:"vatCodeId,omitempty"`
+	VATCodeID                  ValueNullString `json:"vatCodeId"`
 	UOM                        ValueString     `json:"uom,omitempty"`
 	DiscountPercent            ValueNumber     `json:"discountPercent,omitempty"`
 	DiscountAmountInCurrency   ValueNumber     `json:"discountAmountInCurrency,omitempty"`
