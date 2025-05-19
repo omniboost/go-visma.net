@@ -202,9 +202,9 @@ func (v ValueBool) MarshalJSON() ([]byte, error) {
 type ValueTime Time
 
 func (v ValueTime) MarshalJSON() ([]byte, error) {
-	type alias ValueTime
+	s := v.Format("2006-01-02T15:04:05")
 	v2 := Value{
-		Value: alias(v),
+		Value: s,
 	}
 	return omitempty.MarshalJSON(v2)
 }
