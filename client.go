@@ -270,9 +270,6 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 	// check if the response isn't an error
 	err = CheckResponse(httpResp)
 	if err != nil {
-		if httpResp.StatusCode > 299 {
-			return httpResp, errors.New(httpResp.Status)
-		}
 		return httpResp, err
 	}
 
@@ -375,6 +372,9 @@ func CheckResponse(r *http.Response) error {
 	}
 
 	if r.ContentLength == 0 {
+		if r.StatusCode > 299 {
+			return errors.New(r.Status)
+		}
 		return errors.New("response body is empty")
 	}
 
