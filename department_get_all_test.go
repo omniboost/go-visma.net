@@ -1,6 +1,7 @@
 package vismanet_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -9,7 +10,7 @@ import (
 func TestDepartmentGetAll(t *testing.T) {
 	req := client.NewDepartmentGetAll()
 	// req.QueryParams().PeriodID = "202103"
-	resp, err := req.Do()
+	resp, err := req.Do(context.Background())
 	if err != nil {
 		t.Error(err)
 	}

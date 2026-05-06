@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -115,9 +116,9 @@ func (r *CustomerGetByCD) URL() *url.URL {
 	return &u
 }
 
-func (r *CustomerGetByCD) Do() (CustomerGetByCDResponseBody, error) {
+func (r *CustomerGetByCD) Do(ctx context.Context) (CustomerGetByCDResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

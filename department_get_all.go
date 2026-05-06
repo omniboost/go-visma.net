@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -116,9 +117,9 @@ func (r *DepartmentGetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *DepartmentGetAll) Do() (DepartmentGetAllResponseBody, error) {
+func (r *DepartmentGetAll) Do(ctx context.Context) (DepartmentGetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

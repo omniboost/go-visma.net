@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -111,9 +112,9 @@ func (r *FinancialperiodGet) URL() *url.URL {
 	return &u
 }
 
-func (r *FinancialperiodGet) Do() (FinancialperiodGetResponseBody, error) {
+func (r *FinancialperiodGet) Do(ctx context.Context) (FinancialperiodGetResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

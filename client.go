@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -309,7 +308,7 @@ func (c *Client) Unmarshal(r io.Reader, vv ...interface{}) error {
 		return nil
 	}
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
@@ -360,8 +359,8 @@ func CheckResponse(r *http.Response) error {
 	}
 
 	// read data and copy it back
-	data, err := ioutil.ReadAll(r.Body)
-	r.Body = ioutil.NopCloser(bytes.NewReader(data))
+	data, err := io.ReadAll(r.Body)
+	r.Body = io.NopCloser(bytes.NewReader(data))
 	if err != nil {
 		return errorResponse
 	}
