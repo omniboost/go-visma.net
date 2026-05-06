@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -116,9 +117,9 @@ func (r *CustomerGetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *CustomerGetAll) Do() (CustomerGetAllResponseBody, error) {
+func (r *CustomerGetAll) Do(ctx context.Context) (CustomerGetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

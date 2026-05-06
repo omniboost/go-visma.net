@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -112,9 +113,9 @@ func (r *JournalTransactionV2GetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *JournalTransactionV2GetAll) Do() (JournalTransactionV2GetAllResponseBody, error) {
+func (r *JournalTransactionV2GetAll) Do(ctx context.Context) (JournalTransactionV2GetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

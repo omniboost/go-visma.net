@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -109,9 +110,9 @@ func (r *SalesOrderTypeGetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *SalesOrderTypeGetAll) Do() (SalesOrderTypeGetAllResponseBody, error) {
+func (r *SalesOrderTypeGetAll) Do(ctx context.Context) (SalesOrderTypeGetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

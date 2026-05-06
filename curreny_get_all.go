@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -110,9 +111,9 @@ func (r *CurrencyGetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *CurrencyGetAll) Do() (CurrencyGetAllResponseBody, error) {
+func (r *CurrencyGetAll) Do(ctx context.Context) (CurrencyGetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

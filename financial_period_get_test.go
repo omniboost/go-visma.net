@@ -1,6 +1,7 @@
 package vismanet_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -8,7 +9,7 @@ import (
 
 func TestFinancialperiodGet(t *testing.T) {
 	req := client.NewFinancialperiodGet()
-	resp, err := req.Do()
+	resp, err := req.Do(context.Background())
 	if err != nil {
 		t.Error(err)
 	}

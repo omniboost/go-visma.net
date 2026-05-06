@@ -1,6 +1,7 @@
 package vismanet_test
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"testing"
@@ -9,7 +10,7 @@ import (
 func TestJournalTransactionV2GetAll(t *testing.T) {
 	req := client.NewJournalTransactionV2GetAll()
 	req.QueryParams().PeriodID = "202104"
-	resp, err := req.Do()
+	resp, err := req.Do(context.Background())
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,6 +1,7 @@
 package vismanet_test
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"testing"
@@ -8,7 +9,7 @@ import (
 
 func TestCustomerCreditNoteV2Post(t *testing.T) {
 	req := client.NewCustomerCreditNoteV2Post()
-	resp, err := req.Do()
+	resp, err := req.Do(context.Background())
 	if err != nil {
 		t.Error(err)
 	}

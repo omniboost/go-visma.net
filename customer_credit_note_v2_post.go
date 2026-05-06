@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -153,9 +154,9 @@ func (r *CustomerCreditNoteV2Post) URL() *url.URL {
 	return &u
 }
 
-func (r *CustomerCreditNoteV2Post) Do() (CustomerCreditNoteV2PostResponseBody, error) {
+func (r *CustomerCreditNoteV2Post) Do(ctx context.Context) (CustomerCreditNoteV2PostResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

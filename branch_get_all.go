@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -111,9 +112,9 @@ func (r *BranchGetAll) URL() *url.URL {
 	return &u
 }
 
-func (r *BranchGetAll) Do() (BranchGetAllResponseBody, error) {
+func (r *BranchGetAll) Do(ctx context.Context) (BranchGetAllResponseBody, error) {
 	// Create http request
-	req, err := r.client.NewRequest(nil, r)
+	req, err := r.client.NewRequest(ctx, r)
 	if err != nil {
 		return *r.NewResponseBody(), err
 	}

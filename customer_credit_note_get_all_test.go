@@ -1,6 +1,7 @@
 package vismanet_test
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"testing"
@@ -9,7 +10,7 @@ import (
 func TestCustomerCreditNoteGetAll(t *testing.T) {
 	req := client.NewCustomerCreditNoteGetAll()
 	req.QueryParams().ExternalReference = "202331913"
-	resp, err := req.Do()
+	resp, err := req.Do(context.Background())
 	if err != nil {
 		t.Error(err)
 	}
