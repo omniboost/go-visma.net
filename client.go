@@ -367,6 +367,9 @@ func CheckResponse(r *http.Response) error {
 
 	err = checkContentType(r)
 	if err != nil {
+		if r.StatusCode > 299 {
+			return errors.New(r.Status)
+		}
 		return errors.WithStack(err)
 	}
 
