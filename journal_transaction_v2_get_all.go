@@ -35,7 +35,9 @@ func (r JournalTransactionV2GetAll) NewQueryParams() *JournalTransactionV2GetAll
 }
 
 type JournalTransactionV2GetAllQueryParams struct {
-	PeriodID string `schema:"periodId"`
+	PeriodID             string `schema:"periodId,omitempty"`
+	LastModifiedDateTime string `schema:"lastModifiedDateTime,omitempty"`
+	Branch               string `schema:"branch,omitempty"`
 }
 
 func (p JournalTransactionV2GetAllQueryParams) ToURLValues() (url.Values, error) {
