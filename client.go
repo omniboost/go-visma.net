@@ -1,6 +1,7 @@
 package vismanet
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -13,8 +14,11 @@ import (
 	"path"
 	"strings"
 	"text/template"
+	"unicode"
+	"unicode/utf8"
 
-	"github.com/pkg/errors"
+	"github.com/omniboost/go-httperr"
+	"gitlab.com/tozd/go/errors"
 )
 
 const (
@@ -247,7 +251,8 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 
 	httpResp, err := c.http.Do(req)
 	if err != nil {
-		return nil, err
+		// wrap error in http error so we can handle it properly
+		return nil, &httperr.Error{StatusCode: httpResp.StatusCode, Err: err}
 	}
 
 	if c.onRequestCompleted != nil {
@@ -266,12 +271,6 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 		log.Println(string(dump))
 	}
 
-	// check if the response isn't an error
-	err = CheckResponse(httpResp)
-	if err != nil {
-		return httpResp, err
-	}
-
 	// check the provided interface parameter
 	if httpResp == nil {
 		return httpResp, nil
@@ -285,11 +284,20 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 		return httpResp, nil
 	}
 
+	// read 512 bytes without draining the response body we may perhaps later
+	// use for error handling
+	peeked, _ := peek(httpResp, 512)
+
 	errResp := &ErrorResponse{Response: httpResp}
 	exResp := &ExceptionResponse{Response: httpResp}
 	err = c.Unmarshal(httpResp.Body, body, errResp, exResp)
 	if err != nil {
-		return httpResp, err
+		// only return error when its not a json syntax error, otherwise we
+		// assume the response body is not json and ignore it
+		syntaxErr := &json.SyntaxError{}
+		if !errors.As(err, &syntaxErr) {
+			return httpResp, err
+		}
 	}
 
 	if errResp.Message != "" {
@@ -298,6 +306,19 @@ func (c *Client) Do(req *http.Request, body interface{}) (*http.Response, error)
 
 	if exResp.ExceptionMessage != "" {
 		return httpResp, exResp
+	}
+
+	// no matches on th struct, but we got an error status code, try to return
+	// the response body as error message if its just plain text
+	if httpResp.StatusCode != 0 && (httpResp.StatusCode < 200 || httpResp.StatusCode > 299) {
+		// here the original response body could be just text
+		if isPlainText(peeked) {
+			return httpResp, &httperr.Error{StatusCode: httpResp.StatusCode, Err: errors.New(string(peeked))}
+		}
+
+		// not text, but still an error status code, return the status as error
+		// message
+		return httpResp, &httperr.Error{StatusCode: httpResp.StatusCode, Err: errors.New(httpResp.Status)}
 	}
 
 	return httpResp, nil
@@ -329,12 +350,7 @@ func (c *Client) Unmarshal(r io.Reader, vv ...interface{}) error {
 	}
 
 	if len(errs) == len(vv) {
-		// Everything errored
-		msgs := make([]string, len(errs))
-		for i, e := range errs {
-			msgs[i] = fmt.Sprint(e)
-		}
-		return errors.New(strings.Join(msgs, ", "))
+		return errors.Join(errs...)
 	}
 
 	return nil
@@ -429,4 +445,27 @@ func checkContentType(response *http.Response) error {
 	}
 
 	return nil
+}
+
+func isPlainText(b []byte) bool {
+	s := bytes.TrimSpace(b)
+	return utf8.Valid(s) && bytes.IndexFunc(s, func(r rune) bool {
+		return !unicode.IsLetter(r) &&
+			!unicode.IsDigit(r) &&
+			!unicode.IsSpace(r) &&
+			!strings.ContainsRune(`.,!?;:'"()-_/\@#%&*+=`, r)
+	}) == -1
+}
+
+func peek(resp *http.Response, n int) ([]byte, error) {
+	br := bufio.NewReaderSize(resp.Body, n)
+	peeked, err := br.Peek(n)
+	if err != nil && err != io.EOF && err != bufio.ErrBufferFull {
+		return nil, err
+	}
+
+	// Replace the response body with the buffered reader
+	resp.Body = io.NopCloser(br)
+
+	return peeked, nil
 }
